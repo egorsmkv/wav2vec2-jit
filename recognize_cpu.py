@@ -8,15 +8,30 @@ if __name__ == '__main__':
 
     device = 'cpu'
     traced_file = './traced_model_cpu.pth'
-    hf_model_name = 'Yehor/wav2vec2-xls-r-300m-uk-with-small-lm'
-
-    test_file = './wavs/uk_1.wav'
+    vocab_file = './uk/vocab.json'
+    test_file = './uk/wavs/uk_1.wav'
 
     model = torch.jit.load(traced_file)
     model = model.to(device)
 
-    feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(hf_model_name)
-    tokenizer = Wav2Vec2CTCTokenizer.from_pretrained(hf_model_name)
+    feature_extractor = Wav2Vec2FeatureExtractor(
+        do_normalize=True,
+        feature_size=1,
+        padding_side='right',
+        padding_value=0.0,
+        return_attention_mask=True,
+        sampling_rate=16000
+    )
+    tokenizer = Wav2Vec2CTCTokenizer(
+        vocab_file=vocab_file,
+        bos_token="<s>",
+        eos_token="</s>",
+        unk_token="[UNK]",
+        pad_token="[PAD]",
+        word_delimiter_token="|",
+        replace_word_delimiter_char=" ",
+        do_lower_case=False,    
+    )
     processor = Wav2Vec2Processor(feature_extractor, tokenizer)
 
     # recognize
