@@ -1,5 +1,11 @@
 # Export a traced JIT version of wav2vec2 models
 
+## Install
+
+```bash
+pip install torch torchaudio transformers pyctcdecode
+```
+
 ## Use 
 
 ```bash
